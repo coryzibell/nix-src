@@ -17,10 +17,16 @@
     };
   };
 
-  outputs = { self, nixpkgs, nixos-wsl, home-manager, nix-ld, ... }: {
-    nixosConfigurations = {
+  outputs = { self, nixpkgs, nixos-wsl, home-manager, nix-ld, ... }:
+    let
+      system = "x86_64-linux";
+      pkgs = import nixpkgs {
+        inherit system;
+      };
+    in
+    { nixosConfigurations = {
       nixos = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
+        inherit system;
         modules = [
           ./configuration.nix
 
@@ -34,8 +40,16 @@
             # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
             system.stateVersion = "24.11"; # Did you read the comment?
             
-            wsl.enable = true;
-            wsl.defaultUser = "kautau";
+            wsl = {
+              enable = true;
+              defaultUser = "kautau";
+              extraBin = with pkgs; [
+                { src = "${coreutils}/bin/uname"; }
+                { src = "${coreutils}/bin/dirname"; }
+                { src = "${coreutils}/bin/readlink"; }
+                { src = "${curl}/bin/curl"; }
+              ];
+            };
           }
 
           home-manager.nixosModules.home-manager
