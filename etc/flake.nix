@@ -30,6 +30,13 @@
         modules = [
           ./configuration.nix
 
+          {
+            users.users.kautau = {
+              isNormalUser = true;
+              shell = pkgs.nushell;
+            };
+          }
+
           nixos-wsl.nixosModules.default
           {
             # This value determines the NixOS release from which the default
