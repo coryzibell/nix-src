@@ -92,6 +92,7 @@
       go
       darcs
       helix
+      emacs
     ];
     stateVersion = "24.11";
   };
