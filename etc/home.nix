@@ -93,6 +93,8 @@
       darcs
       helix
       emacs
+      mercurialFull
+      bubblewrap
     ];
     stateVersion = "24.11";
   };
