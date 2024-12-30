@@ -33,7 +33,7 @@
           {
             users.users.kautau = {
               isNormalUser = true;
-              shell = pkgs.nushell;
+              shell = pkgs.bash;
             };
           }
 
