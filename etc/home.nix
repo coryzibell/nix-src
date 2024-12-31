@@ -10,7 +10,7 @@
     ];
 
     packages = with pkgs; [
-      neofetch
+      fastfetch
       nnn # terminal file manager
 
       # archives
@@ -46,6 +46,7 @@
       gawk
       zstd
       gnupg
+      findutils
 
       # nix related
       #
@@ -135,6 +136,16 @@
         }
         $env.config = {
           show_banner: false,
+          hooks: {
+            command_not_found: {|cmd|
+              let output = (run-external command-not-found $cmd)
+              if $output != "" {
+                echo $output
+              } else {
+                echo "Command '$cmd' not found."
+              }
+            }
+          },
           completions: {
             case_sensitive: false # case-sensitive completions
             quick: true    # set to false to prevent auto-selecting completions
