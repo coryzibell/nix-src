@@ -20,6 +20,7 @@
   outputs = { self, nixpkgs, nixos-wsl, home-manager, nix-ld, ... }:
     let
       system = "x86_64-linux";
+      config.allowUnfree = true;
       pkgs = import nixpkgs {
         inherit system;
       };
