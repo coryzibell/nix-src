@@ -84,6 +84,7 @@
       automake
       autoconf
       autogen
+      pkg-config
       gnumake
       #llvmPackages.clangWithLibcAndBasicRtAndLibcxx
       go
@@ -93,7 +94,7 @@
       mercurialFull
       bubblewrap
     ];
-    stateVersion = "24.11";
+    stateVersion = "25.05";
   };
 
   programs = {

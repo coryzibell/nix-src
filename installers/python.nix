@@ -36,13 +36,12 @@ in
   shellHook = ''
     export PATH="${pythonLibs}/bin:$PATH"
     export CFLAGS="-I${pythonLibs}/include"
+    export PYTHON_CFLAGS="-I${pythonLibs}/include"
     export CPPFLAGS="-I${pythonLibs}/include"
-    export LDFLAGS="-L${pythonLibs}/lib"
+    export LDFLAGS="-L${pythonLibs}/lib -ltcl8.6 -ltk8.6"
     export PKG_CONFIG_PATH="${pythonLibs}/lib/pkgconfig"
-    export TCLTK_LIBS="-L${pythonLibs}/lib -ltcl8.6 -ltk8.6"
-    export TCLTK_CFLAGS="-I${pythonLibs}/include"
+    # export TCLTK_LIBS="-L${pythonLibs}/lib -ltcl8.6 -ltk8.6"
+    # export TCLTK_CFLAGS="-I${pythonLibs}/include"
     export PYTHON_CONFIGURE_OPTS="--with-openssl=${pythonLibs}"
-    echo $LDFLAGS
-    echo $PYTHON_CONFIGURE_OPTS
   '';
 }
