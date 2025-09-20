@@ -8,6 +8,8 @@ pythonLibs = pkgs.symlinkJoin {
     zlib.out
     readline.out
     readline.dev
+    mpdecimal.out
+    mpdecimal.dev
     # bzip2.bin
     bzip2.dev
     bzip2.out
