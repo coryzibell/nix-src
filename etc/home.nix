@@ -4,10 +4,7 @@
   home = {
     username = "kautau";
     homeDirectory = "/home/kautau";
-    sessionPath = [
-      #"/home/kautau/.asdf/installs/rust/stable/bin"
-      #"/home/kautau/.asdf/installs/haskell/9.8.4/bin"
-    ];
+    sessionPath = [ ];
 
     packages = with pkgs; [
       fastfetch

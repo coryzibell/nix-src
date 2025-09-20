@@ -37,9 +37,10 @@ in
     export CPPFLAGS="-I${pythonLibs}/include"
     export LDFLAGS="-L${pythonLibs}/lib"
     export PKG_CONFIG_PATH="${pythonLibs}/lib/pkgconfig"
-#    export TCLTK_LIBS="-L${pythonLibs}/lib -ltcl8.6 -ltk8.6"
-#    export TCLTK_CFLAGS="-I${pythonLibs}/include"
-    export PYTHON_CONFIGURE_OPTS="--with-openssl=${pythonLibs} --with-tcltk-includes='-I${pythonLibs}/include' --with-tcltk-libs='-L${pythonLibs}/lib -ltcl8.6 -ltk8.6'"
+    export TCLTK_LIBS="-L${pythonLibs}/lib -ltcl8.6 -ltk8.6"
+    export TCLTK_CFLAGS="-I${pythonLibs}/include"
+    export PYTHON_CONFIGURE_OPTS="--with-openssl=${pythonLibs}"
     echo $LDFLAGS
+    echo $PYTHON_CONFIGURE_OPTS
   '';
 }
