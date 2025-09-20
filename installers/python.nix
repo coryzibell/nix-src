@@ -26,8 +26,21 @@ pythonLibs = pkgs.symlinkJoin {
     xz.dev
     xz.out
     tcl
-    tk.dev
-    tk.out
+    tk-8_6
+    tk-8_6.dev
+    tk-8_6.out
+    libuuid.bin
+    libuuid.dev
+    libuuid.out
+    libx11.dev
+    libx11.out
+    xorg.libXft.dev
+    xorg.libXft.out
+    freetype.out
+    freetype.dev
+    fontconfig.dev
+    fontconfig.lib
+    fontconfig.out
   ];
 };
 in
@@ -38,10 +51,12 @@ in
     export CFLAGS="-I${pythonLibs}/include"
     export PYTHON_CFLAGS="-I${pythonLibs}/include"
     export CPPFLAGS="-I${pythonLibs}/include"
-    export LDFLAGS="-L${pythonLibs}/lib -ltcl8.6 -ltk8.6"
+    export LDFLAGS="-L${pythonLibs}/lib -ltcl8.6 -ltclstub8.6"
+    export LD_LIBRARY_PATH="${pythonLibs}/lib"
     export PKG_CONFIG_PATH="${pythonLibs}/lib/pkgconfig"
     # export TCLTK_LIBS="-L${pythonLibs}/lib -ltcl8.6 -ltk8.6"
     # export TCLTK_CFLAGS="-I${pythonLibs}/include"
     export PYTHON_CONFIGURE_OPTS="--with-openssl=${pythonLibs}"
+    cat "${pythonLibs}/lib/pkgconfig/tk.pc"
   '';
 }
