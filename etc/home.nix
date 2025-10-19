@@ -77,6 +77,7 @@
       zlib
       ncurses
       rlwrap
+      openssl.bin
       openssl.dev
       mesa
       (wxGTK32.override { withWebKit = true; })
