@@ -4,7 +4,25 @@
   home = {
     username = "kautau";
     homeDirectory = "/home/kautau";
-    sessionPath = [ ];
+    sessionPath = [
+      "/home/kautau/.ghcup/bin"
+    ];
+
+    shellAliases = {
+        vi = "hx";
+        vim = "hx";
+        nano = "hx";
+        ls = "eza --octal-permissions";
+        update = "nix flake update --flake /etc/nix-darwin && sudo darwin-rebuild switch --flake /etc/nix-darwin && mise upgrade && mise prune && ghcup install ghc latest && ghcup install cabal latest && ghcup install stack latest && ghcup install hls latest && ghcup set ghc latest && ghcup set cabal latest && ghcup set stack latest && ghcup set hls latest";
+        prune = "ghcup gc --unset && nix-env --delete-generations old && sudo nix-store --gc && nix-collect-garbage -d && sudo nix-collect-garbage -d";
+        commit_update = "git add * && git commit -m \"$(openssl dgst -sha256 -binary < /etc/nixos/flake.lock | base100)\"";
+      };
+
+      sessionVariables = with pkgs; {
+        EDITOR = "hx";
+        MISE_NODE_COREPACK = "true";
+        PKG_CONFIG_PATH = "${pkgs.openssl.dev}/lib/pkgconfig";
+      };
 
     packages = with pkgs; [
       fastfetch
@@ -71,14 +89,14 @@
       pciutils # lspci
       usbutils # lsusb
 
-      mise
-
       gcc
       zlib
       ncurses
       rlwrap
+      bc
       openssl.bin
       openssl.dev
+      openssl.out
       mesa
       (wxGTK32.override { withWebKit = true; })
       wxc
@@ -91,9 +109,18 @@
       go
       darcs
       helix
+      micro
       emacs
       mercurialFull
       bubblewrap
+
+      nixd
+      nil
+
+      php
+
+      xz.out
+      zlib.out
     ];
     stateVersion = "25.05";
   };
@@ -104,13 +131,23 @@
       enable = true;
       # ... other things here
       initExtra = ''
-        eval "$(mise activate bash)"
         '';
+    };
+
+    zsh = {
+      enable = true;
+      # ... other things here
+      # initExtra = ''
+      #   eval "$(mise activate zsh)"
+      #   '';
+      oh-my-zsh = {
+        enable = true;
+      };
     };
     
     git = {
       enable = true;
-      extraConfig = {
+      settings = {
         user.name = "Cory Zibell";
         user.email = "cory@zibell.cloud";
         init.defaultBranch = "main";
@@ -118,14 +155,56 @@
       };
     };
 
-    nushell = { enable = true;
+    mise = {
+      enable = true;
+      enableBashIntegration = true;
+      enableZshIntegration = true;
+      enableNushellIntegration = true;
+
+      globalConfig = {
+        settings = {
+          all_compile = false;
+          exec_auto_install = false;
+          jobs = 1;
+          verbose = true;
+        };
+
+        tools = {
+          node = "latest";
+          "cargo:bottom" = "latest";
+          "cargo:eza" = "latest";
+          "cargo:tealdeer" = "latest";
+          "cargo:base100" = "latest";
+          "npm:npm" = "latest";
+          "npm:cordova" = "latest";
+          "npm:@quasar/cli" = "latest";
+          "npm:@google/gemini-cli" = "latest";
+          cargo-binstall = "latest";
+          bun = "latest";
+          deno = "latest";
+          elixir = "latest";
+          erlang = "latest";
+          ghcup = "latest";
+          go = "latest";
+          java = "oracle-graalvm";
+          # php = "8.13";
+          python = "latest";
+          ruby = "latest";
+          rust = "latest";
+          zig = "latest";
+        };
+      };
+
+    };
+
+    nushell = {
+      enable = true;
       # The config.nu can be anywhere you want if you like to edit your Nushell with Nu
       # configFile.source = ./.../config.nu;
       # for editing directly to config.nu 
       
       extraEnv = ''
-        let mise_path = $nu.default-config-dir | path join mise.nu
-        ^mise activate nu | save $mise_path --force
+
       '';
       
       extraConfig = ''
@@ -161,21 +240,21 @@
         } 
         $env.PATH = ($env.PATH | 
           split row (char esep) |
-          prepend /home/myuser/.apps |
+          prepend /home/kautau/.apps |
           append /usr/bin/env
         )
-        use ($nu.default-config-dir | path join mise.nu)
         '';
-        shellAliases = {
-          vi = "hx";
-          vim = "hx";
-          nano = "hx";
-        };
-      };  
-    carapace.enable = true;
-    carapace.enableNushellIntegration = true;
+    };
 
-    starship = { enable = true;
+    carapace = {
+      enable = true;
+      enableBashIntegration = true;
+      enableZshIntegration = true;
+      enableNushellIntegration = true;
+    };
+
+    starship = {
+      enable = true;
       settings = {
         add_newline = false;
         character = { 
@@ -185,6 +264,9 @@
       };
     };
 
-    home-manager.enable = true;
+
+    home-manager = {
+      enable = true;
+    };
   };
 }

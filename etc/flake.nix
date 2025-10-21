@@ -57,6 +57,9 @@
                 { src = "${coreutils}/bin/readlink"; }
                 { src = "${curl}/bin/curl"; }
               ];
+              interop = {
+                includePath = false;
+              };
             };
           }
 

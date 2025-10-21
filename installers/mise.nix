@@ -4,18 +4,30 @@ let
 miseLibs = pkgs.symlinkJoin {
   name = "mise-build-libs";
   paths = with pkgs; [
+    bison
     bzip2.dev
     bzip2.out
+    curl.bin
+    curl.dev
+    curl.out
     fontconfig.dev
     fontconfig.lib
     fontconfig.out
     freetype.dev
     freetype.out
+    gd.bin
+    gd.dev
+    gd.out
     gdbm.dev
     gdbm.out
     gdbm.lib
+    icu.dev
+    icu.out
+    gmp.out
+    gmp.dev
     libffi.dev
     libffi.out
+    libiconv
     libuuid.bin
     libuuid.dev
     libuuid.out
@@ -23,13 +35,16 @@ miseLibs = pkgs.symlinkJoin {
     libx11.out
     libyaml.dev
     libyaml.out
+    libxml2.bin
+    libxml2.dev
+    libxml2.out
     mpdecimal.dev
     mpdecimal.out
     ncurses.dev
     ncurses.out
     openssl.bin
     openssl.dev
-    openssl.out
+    re2c
     readline.dev
     readline.out
     sqlite.dev
@@ -48,9 +63,16 @@ miseLibs = pkgs.symlinkJoin {
     zlib.out
   ];
 };
+
 in
   pkgs.mkShell {
-  buildInputs = [ miseLibs ];
+  buildInputs = [
+    miseLibs
+    pkgs.gettext
+    pkgs.glfw
+    pkgs.libGLU
+    pkgs.unixODBC
+  ];
   nativeBuildInputs = [
     miseLibs
     pkgs.gdbm
@@ -60,13 +82,11 @@ in
   shellHook = ''
     export PATH="${miseLibs}/bin:$PATH"
     export CFLAGS="-O2 -g -I${miseLibs}/include"
-    export PYTHON_CFLAGS="-I${miseLibs}/include"
     export CPPFLAGS="-I${miseLibs}/include"
     export LDFLAGS="-L${miseLibs}/lib"
     export LD_LIBRARY_PATH="${miseLibs}/lib"
     export PKG_CONFIG_PATH="${miseLibs}/lib/pkgconfig"
-    # export TCLTK_LIBS="-L${miseLibs}/lib -ltcl8.6 -ltk8.6"
-    # export TCLTK_CFLAGS="-I${miseLibs}/include"
-    export PYTHON_CONFIGURE_OPTS="--with-openssl=${miseLibs}"
+    export KERL_CONFIGURE_OPTIONS="--enable-wx --enable-webview --with-ssl=${miseLibs} --with-odbc=${pkgs.unixODBC}"
+    export PHP_CONFIGURE_OPTIONS="--with-gettext=${pkgs.gettext}"
   '';
 }
