@@ -151,7 +151,7 @@
         user.name = "Cory Zibell";
         user.email = "cory@zibell.cloud";
         init.defaultBranch = "main";
-        core.sshCommand = "ssh.exe";
+        core.sshCommand = "/mnt/c/WINDOWS/System32/OpenSSH/ssh.exe";
       };
     };
 
