@@ -166,7 +166,7 @@
           all_compile = false;
           exec_auto_install = false;
           jobs = 1;
-          verbose = true;
+          # verbose = true;
         };
 
         tools = {
