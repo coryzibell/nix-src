@@ -13,7 +13,7 @@
         vim = "hx";
         nano = "hx";
         ls = "eza --octal-permissions";
-        update = "nix flake update --flake /etc/nixos && sudo nixos-rebuild switch && mise upgrade && mise prune && ghcup install ghc latest && ghcup install cabal latest && ghcup install stack latest && ghcup install hls latest && ghcup set ghc latest && ghcup set cabal latest && ghcup set stack latest && ghcup set hls latest";
+        update = "sudo nix-channel --update && sudo nix flake update --flake /etc/nixos && sudo nixos-rebuild switch --flake && mise upgrade && mise prune && ghcup install ghc latest && ghcup install cabal latest && ghcup install stack latest && ghcup install hls latest && ghcup set ghc latest && ghcup set cabal latest && ghcup set stack latest && ghcup set hls latest";
         prune = "ghcup gc --unset && nix-env --delete-generations old && sudo nix-store --gc && nix-collect-garbage -d && sudo nix-collect-garbage -d";
         commit_update = "git add * && git commit -m \"$(openssl dgst -sha256 -binary < /etc/nixos/flake.lock | base100)\"";
       };
