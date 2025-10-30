@@ -177,6 +177,7 @@
           "cargo:base100" = "latest";
           "npm:npm" = "latest";
           "npm:cordova" = "latest";
+          "npm:corepack" = "latest";
           "npm:@quasar/cli" = "latest";
           "npm:@google/gemini-cli" = "latest";
           cargo-binstall = "latest";
