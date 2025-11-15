@@ -24,5 +24,13 @@
   ];
   # Set the default editor to vim
   environment.variables.EDITOR = "nano";
+  
+  users.users.kautau = {
+    isNormalUser = true;
+    description = "Kautau";
+    extraGroups = [ "wheel" "docker" ];
+  };
+
+  virtualisation.docker.enable = true;
 
 }
