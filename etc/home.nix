@@ -180,6 +180,7 @@
           "npm:corepack" = "latest";
           "npm:@quasar/cli" = "latest";
           "npm:@google/gemini-cli" = "latest";
+          "npm:@github/copilot" = "latest";
           cargo-binstall = "latest";
           bun = "latest";
           deno = "latest";
