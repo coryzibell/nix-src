@@ -1,26 +1,26 @@
 { pkgs, ... }:
 
-pkgs.writeShellScriptBin "speedtest" ''
-    # 1. Define Colors
-    local CYAN='\033[0;36m'
-    local WHITE='\033[1;37m'
-    local YELLOW='\033[1;33m'
-    local MAGENTA='\033[1;35m'
-    local GREEN='\033[0;32m'
-    local RED='\033[0;31m'
-    local GRAY='\033[1;30m'
-    local NC='\033[0m' # No Color
+pkgs.writeShellScriptBin "download" ''
+    # Define Colors
+    CYAN='\033[0;36m'
+    WHITE='\033[1;37m'
+    YELLOW='\033[1;33m'
+    MAGENTA='\033[1;35m'
+    GREEN='\033[0;32m'
+    RED='\033[0;31m'
+    GRAY='\033[1;30m'
+    NC='\033[0m' # No Color
 
     clear
-    echo -e "${CYAN}=============================================${NC}"
-    echo -e "${WHITE}      INTERNET SPEED TEST (BASH/CURL)        ${NC}"
-    echo -e "${CYAN}=============================================${NC}"
+    echo -e "''${CYAN}=============================================''${NC}"
+    echo -e "''${WHITE}    INTERNET SPEED TEST (HOME MANAGER)       ''${NC}"
+    echo -e "''${CYAN}=============================================''${NC}"
 
-    echo -e "${YELLOW}--- GLOBAL / CDN ---${NC}"
+    echo -e "''${YELLOW}--- GLOBAL / CDN ---''${NC}"
     echo " 1. Cloudflare  (Nearest CDN - Fastest)"
     echo " 2. Tele2       (Global/Europe Generic)"
 
-    echo -e "\n${YELLOW}--- HETZNER OFFICIAL ---${NC}"
+    echo -e "\n''${YELLOW}--- HETZNER OFFICIAL ---''${NC}"
     echo " 3. Nuremberg   (DE - nbg1)"
     echo " 4. Falkenstein (DE - fsn1)"
     echo " 5. Helsinki    (FI - hel1)"
@@ -28,12 +28,12 @@ pkgs.writeShellScriptBin "speedtest" ''
     echo " 7. Hillsboro   (US West - hil)"
     echo " 8. Singapore   (Asia - sin)"
 
-    echo -e "\n${YELLOW}--- VULTR OFFICIAL ---${NC}"
+    echo -e "\n''${YELLOW}--- VULTR OFFICIAL ---''${NC}"
     echo " 9. New Jersey  (US East)"
     echo "10. Silicon Vly (US West)"
     echo "11. Singapore   (Asia)"
 
-    echo -e "\n${MAGENTA}--- CUSTOM ---${NC}"
+    echo -e "\n''${MAGENTA}--- CUSTOM ---''${NC}"
     echo " c. Custom URL  (Enter your own link)"
 
     echo -e "---------------------------------------------"
@@ -42,11 +42,10 @@ pkgs.writeShellScriptBin "speedtest" ''
 
     read -p "Select a Test Server: " selection
 
-    # Defaults
-    local dest="/dev/null"
-    local save_msg="(Discarding Data)"
-    local url=""
-    local name=""
+    dest="/dev/null"
+    save_msg="(Discarding Data)"
+    url=""
+    name=""
 
     case $selection in
         1) url="https://speed.cloudflare.com/__down?bytes=100000000"; name="Cloudflare (CDN)" ;;
@@ -62,15 +61,12 @@ pkgs.writeShellScriptBin "speedtest" ''
         11) url="https://sgp-ping.vultr.com/vultr.com.100MB.bin"; name="Vultr (Singapore)" ;;
         c|C) 
             read -p "Paste your URL here: " url
-            # Add http if missing
             if [[ ! "$url" =~ ^http ]]; then url="http://$url"; fi
             name="Custom URL"
             
-            # Save Logic
             read -p "Save this file to current folder? (y/n): " want_save
             if [[ "$want_save" == "y" || "$want_save" == "Y" ]]; then
-                # Extract filename, remove query strings
-                local suggested=$(basename "$url" | cut -d? -f1)
+                suggested=$(basename "$url" | cut -d? -f1)
                 if [[ -z "$suggested" ]]; then suggested="speedtest_file.dat"; fi
                 
                 read -p "Enter filename (Enter to use '$suggested'): " user_filename
@@ -78,37 +74,29 @@ pkgs.writeShellScriptBin "speedtest" ''
                 save_msg="(Saving to: $(pwd)/$dest)"
             fi
             ;;
-        q|Q) echo "Exiting..."; return ;;
+        q|Q) echo "Exiting..."; exit ;;
         *) echo "Invalid selection. Defaulting to Cloudflare."; url="https://speed.cloudflare.com/__down?bytes=100000000"; name="Cloudflare (Default)" ;;
     esac
 
-    echo -e "\n${YELLOW}Testing against $name...${NC}"
-    echo -e "${GRAY}$save_msg${NC}"
+    echo -e "\n''${YELLOW}Testing against $name...''${NC}"
+    echo -e "''${GRAY}$save_msg''${NC}"
     echo -e "Please wait...\n"
 
-    # 2. Run Curl
-    # We capture the specific output format into a variable ($result)
-    # The progress bar (-#) goes to stderr, so it still prints to screen automatically
-    local format="%{http_code}|%{time_connect}|%{time_starttransfer}|%{time_total}|%{speed_download}|%{size_download}"
-    local result=$(curl -L -o "$dest" -# -w "$format" "$url")
+    format="%{http_code}|%{time_connect}|%{time_starttransfer}|%{time_total}|%{speed_download}|%{size_download}"
 
-    # 3. Parse Output
-    # We split the result string by the pipe delimiter |
+    # Run curl
+    result=$(curl -L -o "$dest" -# -w "$format" "$url")
+
     IFS='|' read -r code connect ttfb total speed_bps size_bytes <<< "$result"
 
-    # 4. Perform Math (using awk for floating point)
-    # mbs = bytes / 1048576
-    # mbps = (bytes * 8) / 1000000
-    # size_mb = bytes / 1048576
+    # Math with awk
     read mbs mbps size_mb <<< $(awk -v s="$speed_bps" -v z="$size_bytes" 'BEGIN { printf "%.2f %.2f %.2f", s/1048576, (s*8)/1000000, z/1048576 }')
 
-    # 5. Output Formatting
-    echo "" # Spacer
-    
+    echo "" 
     if [[ "$code" == "200" ]]; then
-        echo -e "Status:  ${GREEN}$code (OK)${NC}"
+        echo -e "Status:  ''${GREEN}$code (OK)''${NC}"
     else
-        echo -e "Status:  ${RED}$code (Error/Redirect)${NC}"
+        echo -e "Status:  ''${RED}$code (Error/Redirect)''${NC}"
     fi
 
     printf "Connect: %ss\n" "$connect"
@@ -117,18 +105,18 @@ pkgs.writeShellScriptBin "speedtest" ''
     echo "----------------"
     printf "Size:    %s MB\n" "$size_mb"
 
-    # Small file warning
-    if (( $(echo "$size_mb < 10" | bc -l 2>/dev/null || awk 'BEGIN{print ("'$size_mb'" < 10)}') )); then
-         echo -e "${MAGENTA}WARNING: File is very small (<10MB). Speed result may be inaccurate.${NC}"
+    is_small=$(awk -v size="$size_mb" 'BEGIN { if (size < 10) print 1; else print 0 }')
+    if [[ "$is_small" -eq 1 ]]; then
+        echo -e "''${MAGENTA}WARNING: File is very small (<10MB). Speed result may be inaccurate.''${NC}"
     fi
     echo "----------------"
 
     if [[ "$code" == "200" ]]; then
-        echo -e "Speed:   ${GREEN}$mbs MB/s  ($mbps Mbps)${NC}"
+        echo -e "Speed:   ''${GREEN}$mbs MB/s  ($mbps Mbps)''${NC}"
         if [[ "$dest" != "/dev/null" ]]; then
-             echo -e "\n${CYAN}File saved successfully: $dest${NC}"
+            echo -e "\n''${CYAN}File saved successfully: $dest''${NC}"
         fi
     else
-        echo -e "Speed:   ${GRAY}$mbs MB/s  ($mbps Mbps) - (Invalid due to Error)${NC}"
+        echo -e "Speed:   ''${GRAY}$mbs MB/s  ($mbps Mbps) - (Invalid due to Error)''${NC}"
     fi
 ''

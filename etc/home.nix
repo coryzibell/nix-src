@@ -25,6 +25,8 @@
       };
 
     packages = with pkgs; [
+      (pkgs.callPackage ./download.nix { })
+
       fastfetch
       nnn # terminal file manager
 
