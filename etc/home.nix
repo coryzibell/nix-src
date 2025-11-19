@@ -177,6 +177,8 @@
           "cargo:eza" = "latest";
           "cargo:tealdeer" = "latest";
           "cargo:base100" = "latest";
+          "cargo:speedo" = "latest";
+          "cargo:ascim" = "latest";
           "npm:npm" = "latest";
           "npm:cordova" = "latest";
           "npm:corepack" = "latest";
