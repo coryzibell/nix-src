@@ -14,6 +14,10 @@ let
       gdk-pixbuf.out
       glib.dev
       glib.out
+      libGL.dev
+      libGL.out
+      libGLU.dev
+      libGLU.out
       gtk3.dev
       gtk3.out
       harfbuzz.dev
@@ -52,6 +56,10 @@ let
       gettext
       gmp.out
       gmp.dev
+      glibc.dev
+      glibc.out
+      glibc.bin
+      glibc.static
       glfw
       icu.dev
       icu.out
@@ -92,6 +100,8 @@ let
       wayland.dev
       wayland.out
       wayland-protocols
+      libxkbcommon.dev
+      libxkbcommon.out
       tk
       tk.dev
       tk.out
@@ -105,6 +115,61 @@ let
       xz.out
       zlib.dev
       zlib.out
+
+      libavif.dev
+      libavif.out
+
+      libwebp
+
+      libjpeg.dev
+      libjpeg.out
+      libjpeg.bin
+
+      freetype.dev
+      freetype.out
+
+      # PHP extension dependencies
+      oniguruma.dev
+      oniguruma.lib
+      oniguruma.out
+
+      libzip.dev
+      libzip.out
+
+      libsodium.dev
+      libsodium.out
+
+      php84Extensions.igbinary.dev
+      php84Extensions.igbinary.out
+
+      postgresql.dev
+      postgresql.lib
+      postgresql.out
+
+      mariadb
+
+      openldap.dev
+      openldap.out
+
+      libxslt.bin
+      libxslt.dev
+      libxslt.out
+
+      libargon2
+
+      html-tidy
+
+      enchant2.dev
+      enchant2.out
+
+      # Redis/Memcached support
+      hiredis
+
+      libmemcached
+
+      # ImageMagick for image processing
+      imagemagick.out
+      imagemagick.dev
     ];
   };
 in
@@ -137,7 +202,7 @@ in
         PYTHON_CFLAGS = "-I${devLibs}/include";
         CPPFLAGS = "-I${devLibs}/include";
         LDFLAGS = "-L${devLibs}/lib";
-        LD_LIBRARY_PATH = "${devLibs}/lib";
+        LD_LIBRARY_PATH = "${devLibs}/lib:${pkgs.stdenv.cc.cc.lib}/lib";
         PKG_CONFIG_PATH = "${devLibs}/lib/pkgconfig:${devLibs}/share/pkgconfig";
         
         # Nix build environment
@@ -156,7 +221,7 @@ in
         KERL_CONFIGURE_OPTIONS = "--enable-wx --enable-webview --with-ssl=${devLibs} --with-odbc=${devLibs}";
         
         # PHP configuration
-        PHP_CONFIGURE_OPTIONS = "--with-gettext=${devLibs}";
+        PHP_CONFIGURE_OPTIONS = "--with-openssl=${devLibs} --with-curl=${devLibs} --with-gettext=${devLibs} --with-sodium=${devLibs}";
         
         # Clang/LLVM library paths
         ZLIB_ROOT = "${devLibs}";
@@ -176,7 +241,7 @@ in
         LIBEDIT_INCLUDE_DIR = "${devLibs}/include";
         
         # Rust linker configuration
-        RUSTFLAGS = "-L ${devLibs}/lib -C link-arg=-Wl,-rpath,${devLibs}/lib";
+        RUSTFLAGS = "-L ${devLibs}/lib -L ${pkgs.stdenv.cc.cc.lib}/lib -C link-arg=-Wl,-rpath,${devLibs}/lib -C link-arg=-Wl,-rpath,${pkgs.stdenv.cc.cc.lib}/lib";
       };
 
     packages = with pkgs; [
@@ -284,8 +349,6 @@ in
 
       nixd
       nil
-
-      php
     ];
     stateVersion = "25.05";
   };
@@ -361,7 +424,7 @@ in
           go = "latest";
           java = "oracle-graalvm";
           flutter = "latest";
-          # php = "8.13";
+          php = "latest";
           python = "latest";
           ruby = "latest";
           rust = "latest";
