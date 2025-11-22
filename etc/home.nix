@@ -1,4 +1,113 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
+
+let
+  # Combined development libraries for mise and general development
+  devLibs = pkgs.symlinkJoin {
+    name = "dev-libs";
+    paths = with pkgs; [
+      # GTK/GUI libraries and dependencies
+      atk.dev
+      atk.out
+      cairo.dev
+      cairo.out
+      gdk-pixbuf.dev
+      gdk-pixbuf.out
+      glib.dev
+      glib.out
+      gtk3.dev
+      gtk3.out
+      harfbuzz.dev
+      harfbuzz.out
+      libepoxy.dev
+      libepoxy.out
+      libpng.dev
+      libpng.out
+      libsysprof-capture
+      pango.dev
+      pango.out
+      pcre2.dev
+      pcre2.out
+      sysprof.dev
+      sysprof.lib
+      sysprof.out
+      
+      # Core build libraries
+      bison
+      bzip2.dev
+      bzip2.out
+      curl.bin
+      curl.dev
+      curl.out
+      fontconfig.dev
+      fontconfig.lib
+      fontconfig.out
+      freetype.dev
+      freetype.out
+      gd.bin
+      gd.dev
+      gd.out
+      gdbm.dev
+      gdbm.out
+      gdbm.lib
+      gettext
+      gmp.out
+      gmp.dev
+      glfw
+      icu.dev
+      icu.out
+      libbacktrace
+      libedit.dev
+      libedit.out
+      libffi.dev
+      libffi.out
+      libGLU
+      libglvnd.dev
+      libglvnd.out
+      libiconv
+      libuuid.bin
+      libuuid.dev
+      libuuid.out
+      libx11.dev
+      libx11.out
+      libxml2.bin
+      libxml2.dev
+      libxml2.out
+      libyaml.dev
+      libyaml.out
+      mesa.out
+      mpdecimal.dev
+      mpdecimal.out
+      ncurses.dev
+      ncurses.out
+      ncurses5
+      openssl.bin
+      openssl.dev
+      openssl.out
+      re2c
+      readline.dev
+      readline.out
+      sqlite.dev
+      sqlite.out
+      tcl
+      wayland.dev
+      wayland.out
+      wayland-protocols
+      tk
+      tk.dev
+      tk.out
+      unixODBC
+      xorg.libXft.dev
+      xorg.libXft.out
+      xorg.libXinerama.dev
+      xorg.libXinerama.out
+      xorg.xorgproto
+      xz.dev
+      xz.out
+      zlib.dev
+      zlib.out
+    ];
+  };
+in
 
 {
   home = {
@@ -12,20 +121,69 @@
         vi = "hx";
         vim = "hx";
         nano = "hx";
-        ls = "eza --octal-permissions";
+        ls = "eza -lamuUh --git --git-repos --octal-permissions --color-scale --color-scale-mode gradient --classify=always";
         update = "sudo nix-channel --update && sudo nix flake update --flake /etc/nixos && sudo nixos-rebuild switch --flake /etc/nixos && mise upgrade && mise prune && ghcup install ghc latest && ghcup install cabal latest && ghcup install stack latest && ghcup install hls latest && ghcup set ghc latest && ghcup set cabal latest && ghcup set stack latest && ghcup set hls latest";
         prune = "ghcup gc --unset && nix-env --delete-generations old && sudo nix-store --gc && nix-collect-garbage -d && sudo nix-collect-garbage -d";
         commit_update = "cd ~/src/nix-src && git add * && git commit -m \"$(openssl dgst -sha256 -binary < /etc/nixos/flake.lock | base100)\"";
       };
 
-      sessionVariables = with pkgs; {
+      sessionVariables = {
         EDITOR = "hx";
         MISE_NODE_COREPACK = "true";
-        PKG_CONFIG_PATH = "${pkgs.openssl.dev}/lib/pkgconfig";
+        
+        # Build flags
+        CFLAGS = "-O2 -g -I${devLibs}/include";
+        CXXFLAGS = "-O2 -g -I${devLibs}/include";
+        PYTHON_CFLAGS = "-I${devLibs}/include";
+        CPPFLAGS = "-I${devLibs}/include";
+        LDFLAGS = "-L${devLibs}/lib";
+        LD_LIBRARY_PATH = "${devLibs}/lib";
+        PKG_CONFIG_PATH = "${devLibs}/lib/pkgconfig:${devLibs}/share/pkgconfig";
+        
+        # Nix build environment
+        NIX_CFLAGS_COMPILE = "-I${devLibs}/include";
+        NIX_LDFLAGS = "-L${devLibs}/lib";
+        
+        # CMake configuration
+        CMAKE_PREFIX_PATH = "${devLibs}";
+        CMAKE_INCLUDE_PATH = "${devLibs}/include";
+        CMAKE_LIBRARY_PATH = "${devLibs}/lib";
+        
+        # Python/mise configuration
+        PYTHON_CONFIGURE_OPTS = "--with-openssl=${devLibs}";
+        
+        # Erlang/Elixir configuration
+        KERL_CONFIGURE_OPTIONS = "--enable-wx --enable-webview --with-ssl=${devLibs} --with-odbc=${devLibs}";
+        
+        # PHP configuration
+        PHP_CONFIGURE_OPTIONS = "--with-gettext=${devLibs}";
+        
+        # Clang/LLVM library paths
+        ZLIB_ROOT = "${devLibs}";
+        ZLIB_LIBRARY = "${devLibs}/lib/libz.so";
+        ZLIB_INCLUDE_DIR = "${devLibs}/include";
+        OPENSSL_ROOT = "${devLibs}";
+        OPENSSL_LIBRARIES = "${devLibs}/lib";
+        OPENSSL_INCLUDE_DIR = "${devLibs}/include";
+        LIBXML2_ROOT = "${devLibs}";
+        LIBXML2_LIBRARIES = "${devLibs}/lib";
+        LIBXML2_INCLUDE_DIR = "${devLibs}/include";
+        Backtrace_ROOT = "${pkgs.libbacktrace}";
+        Backtrace_LIBRARIES = "${pkgs.libbacktrace}/lib";
+        Backtrace_INCLUDE_DIR = "${pkgs.libbacktrace}/include";
+        LIBEDIT_ROOT = "${devLibs}";
+        LIBEDIT_LIBRARIES = "${devLibs}/lib";
+        LIBEDIT_INCLUDE_DIR = "${devLibs}/include";
+        
+        # Rust linker configuration
+        RUSTFLAGS = "-L ${devLibs}/lib -C link-arg=-Wl,-rpath,${devLibs}/lib";
       };
 
     packages = with pkgs; [
       (pkgs.callPackage ./download.nix { })
+      
+      # Add devLibs to packages so it's in the environment
+      devLibs
 
       fastfetch
       nnn # terminal file manager
@@ -91,25 +249,33 @@
       pciutils # lspci
       usbutils # lsusb
 
+      # build-essential tools
+      (lib.hiPrio clang)
       gcc
-      zlib
-      ncurses
-      rlwrap
-      bc
-      openssl.bin
-      openssl.dev
-      openssl.out
-      mesa
-      (wxGTK32.override { withWebKit = true; })
-      wxc
+      cmake
+      ninja
+      gnumake
       automake
       autoconf
       autogen
+      libtool
       pkg-config
-      gnumake
+      binutils
+      gdb
+      patch
+      m4
+      flex
+      
+      # libraries
+      rlwrap
+      bc
+      mesa
+      (wxGTK32.override { withWebKit = true; })
+      wxc
       #llvmPackages.clangWithLibcAndBasicRtAndLibcxx
       go
       darcs
+      gh # GitHub CLI
       helix
       micro
       emacs
@@ -120,9 +286,6 @@
       nil
 
       php
-
-      xz.out
-      zlib.out
     ];
     stateVersion = "25.05";
   };
@@ -133,6 +296,10 @@
       enable = true;
       # ... other things here
       initExtra = ''
+        # Ensure development environment is available in all bash sessions
+        if [ -f "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh" ]; then
+          . "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
+        fi
         '';
     };
 
@@ -193,6 +360,7 @@
           ghcup = "latest";
           go = "latest";
           java = "oracle-graalvm";
+          flutter = "latest";
           # php = "8.13";
           python = "latest";
           ruby = "latest";
