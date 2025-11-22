@@ -223,6 +223,9 @@ in
         # PHP configuration
         PHP_CONFIGURE_OPTIONS = "--with-openssl=${devLibs} --with-curl=${devLibs} --with-gettext=${devLibs} --with-sodium=${devLibs}";
         
+        # Ruby configuration (skip test extensions to avoid NixOS glibc compatibility issues)
+        RUBY_CONFIGURE_OPTS = "--disable-install-doc --with-out-ext=-test-/cxxanyargs";
+        
         # Clang/LLVM library paths
         ZLIB_ROOT = "${devLibs}";
         ZLIB_LIBRARY = "${devLibs}/lib/libz.so";
