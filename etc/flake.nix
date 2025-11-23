@@ -15,9 +15,25 @@
       url = "github:nix-community/nix-ld";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    # zed-editor = {
+    #   url = "github:zed-industries/zed";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    # };
+    mise = {
+      url = "github:jdx/mise";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, nixos-wsl, home-manager, nix-ld, ... }:
+  outputs = {
+    self,
+    nixpkgs,
+    nixos-wsl,
+    home-manager,
+    nix-ld,
+    # zed-editor,
+    mise,
+  ... }:
     let
       system = "x86_64-linux";
       config.allowUnfree = true;
@@ -47,7 +63,7 @@
             # Before changing this value read the documentation for this option
             # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
             system.stateVersion = "25.05"; # Did you read the comment?
-            
+
             wsl = {
               enable = true;
               defaultUser = "kautau";
@@ -68,6 +84,10 @@
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
             home-manager.users.kautau = import ./home.nix;
+            home-manager.extraSpecialArgs = { inherit
+              # zed-editor
+              mise;
+            };
           }
 
           nix-ld.nixosModules.nix-ld

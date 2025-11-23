@@ -1,11 +1,161 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, zed-editor, mise, ... }:
 
 let
   # Combined development libraries for mise and general development
   devLibs = pkgs.symlinkJoin {
     name = "dev-libs";
     paths = with pkgs; [
-      # GTK/GUI libraries and dependencies
+      # === Core System Libraries ===
+      dbus.dev
+      dbus.lib
+      dbus.out
+      glibc.bin
+      glibc.dev
+      glibc.out
+      glibc.static
+      libbacktrace
+      libiconv
+      libuuid.bin
+      libuuid.dev
+      libuuid.out
+
+      # === Compression Libraries ===
+      brotli.dev
+      brotli.lib
+      brotli.out
+      bzip2.dev
+      bzip2.out
+      libdeflate
+      libzip.dev
+      libzip.out
+      xz.dev
+      xz.out
+      zlib.dev
+      zlib.out
+      zstd.bin
+      zstd.dev
+      zstd.out
+
+      # === Cryptography & Security ===
+      libargon2
+      libsodium.dev
+      libsodium.out
+      openssl.bin
+      openssl.dev
+      openssl.out
+
+      # === SELinux Security ===
+      libselinux.bin
+      libselinux.dev
+      libselinux.out
+      libsepol.bin
+      libsepol.dev
+      libsepol.out
+
+      # === Text Processing & Internationalization ===
+      enchant2.dev
+      enchant2.out
+      expat.dev
+      expat.out
+      gettext
+      icu.dev
+      icu.out
+      oniguruma.dev
+      oniguruma.lib
+      oniguruma.out
+      pcre2.dev
+      pcre2.out
+      re2c
+
+      # === Data Structures & Parsing ===
+      gmp.dev
+      gmp.out
+      mpdecimal.dev
+      mpdecimal.out
+      libyaml.dev
+      libyaml.out
+
+      # === Databases ===
+      gdbm.dev
+      gdbm.lib
+      gdbm.out
+      mariadb
+      postgresql.dev
+      postgresql.lib
+      postgresql.out
+      sqlite.dev
+      sqlite.out
+      unixODBC
+
+      # === LDAP ===
+      openldap.dev
+      openldap.out
+
+      # === Networking & Transfer ===
+      curl.bin
+      curl.dev
+      curl.out
+
+      # === Terminal & CLI ===
+      libedit.dev
+      libedit.out
+      ncurses.dev
+      ncurses.out
+      ncurses5
+      readline.dev
+      readline.out
+
+      # === Build Tools & FFI ===
+      bison
+      libffi.dev
+      libffi.out
+
+      # === Graphics & OpenGL ===
+      glfw
+      libGL.dev
+      libGL.out
+      libGLU
+      libGLU.dev
+      libGLU.out
+      libepoxy.dev
+      libepoxy.out
+      libglvnd.dev
+      libglvnd.out
+      mesa.out
+
+      # === Image Processing & Formats ===
+      imagemagick.dev
+      imagemagick.out
+      lerc.dev
+      lerc.out
+      libavif.dev
+      libavif.out
+      libjpeg.bin
+      libjpeg.dev
+      libjpeg.out
+      libpng.dev
+      libpng.out
+      libtiff.bin
+      libtiff.dev
+      libtiff.out
+      libwebp
+
+      # === Font & Text Rendering ===
+      fontconfig.dev
+      fontconfig.lib
+      fontconfig.out
+      freetype.dev
+      freetype.out
+      fribidi.dev
+      fribidi.out
+      graphite2.dev
+      graphite2.out
+      harfbuzz.dev
+      harfbuzz.out
+      pango.dev
+      pango.out
+
+      # === GTK & GUI Libraries ===
       atk.dev
       atk.out
       cairo.dev
@@ -14,162 +164,82 @@ let
       gdk-pixbuf.out
       glib.dev
       glib.out
-      libGL.dev
-      libGL.out
-      libGLU.dev
-      libGLU.out
       gtk3.dev
       gtk3.out
-      harfbuzz.dev
-      harfbuzz.out
-      libepoxy.dev
-      libepoxy.out
-      libpng.dev
-      libpng.out
       libsysprof-capture
-      pango.dev
-      pango.out
-      pcre2.dev
-      pcre2.out
       sysprof.dev
       sysprof.lib
       sysprof.out
-      
-      # Core build libraries
-      bison
-      bzip2.dev
-      bzip2.out
-      curl.bin
-      curl.dev
-      curl.out
-      fontconfig.dev
-      fontconfig.lib
-      fontconfig.out
-      freetype.dev
-      freetype.out
+
+      # === Graphics Utilities ===
       gd.bin
       gd.dev
       gd.out
-      gdbm.dev
-      gdbm.out
-      gdbm.lib
-      gettext
-      gmp.out
-      gmp.dev
-      glibc.dev
-      glibc.out
-      glibc.bin
-      glibc.static
-      glfw
-      icu.dev
-      icu.out
-      libbacktrace
-      libedit.dev
-      libedit.out
-      libffi.dev
-      libffi.out
-      libGLU
-      libglvnd.dev
-      libglvnd.out
-      libiconv
-      libuuid.bin
-      libuuid.dev
-      libuuid.out
+      pixman
+
+      # === Thai Language Support ===
+      libdatrie.bin
+      libdatrie.dev
+      libdatrie.lib
+      libdatrie.out
+      libthai.dev
+      libthai.out
+
+      # === X11 & Wayland Display ===
       libx11.dev
       libx11.out
-      libxml2.bin
-      libxml2.dev
-      libxml2.out
-      libyaml.dev
-      libyaml.out
-      mesa.out
-      mpdecimal.dev
-      mpdecimal.out
-      ncurses.dev
-      ncurses.out
-      ncurses5
-      openssl.bin
-      openssl.dev
-      openssl.out
-      re2c
-      readline.dev
-      readline.out
-      sqlite.dev
-      sqlite.out
-      tcl
+      libxkbcommon.dev
+      libxkbcommon.out
+      libxrandr.dev
+      libxrandr.out
+      libxcomposite.dev
+      libxcomposite.out
+      libxcursor.dev
+      libxcursor.out
+      libxdamage.dev
+      libxdamage.out
+      libxtst
       wayland.dev
       wayland.out
       wayland-protocols
-      libxkbcommon.dev
-      libxkbcommon.out
+      xorg.libXau.dev
+      xorg.libXau.out
+      xorg.libXdmcp.dev
+      xorg.libXdmcp.out
+      xorg.libXext.dev
+      xorg.libXext.out
+      xorg.libXft.dev
+      xorg.libXft.out
+      xorg.libXfixes.dev
+      xorg.libXfixes.out
+      xorg.libXi.dev
+      xorg.libXi.out
+      xorg.libXinerama.dev
+      xorg.libXinerama.out
+      xorg.libXrender.dev
+      xorg.libXrender.out
+      xorg.libxcb.dev
+      xorg.libxcb.out
+      xorg.xorgproto
+
+      # === Tcl/Tk GUI Framework ===
+      tcl
       tk
       tk.dev
       tk.out
-      unixODBC
-      xorg.libXft.dev
-      xorg.libXft.out
-      xorg.libXinerama.dev
-      xorg.libXinerama.out
-      xorg.xorgproto
-      xz.dev
-      xz.out
-      zlib.dev
-      zlib.out
 
-      libavif.dev
-      libavif.out
-
-      libwebp
-
-      libjpeg.dev
-      libjpeg.out
-      libjpeg.bin
-
-      freetype.dev
-      freetype.out
-
-      # PHP extension dependencies
-      oniguruma.dev
-      oniguruma.lib
-      oniguruma.out
-
-      libzip.dev
-      libzip.out
-
-      libsodium.dev
-      libsodium.out
-
-      php84Extensions.igbinary.dev
-      php84Extensions.igbinary.out
-
-      postgresql.dev
-      postgresql.lib
-      postgresql.out
-
-      mariadb
-
-      openldap.dev
-      openldap.out
-
+      # === XML & XSLT Processing ===
+      html-tidy
+      libxml2.bin
+      libxml2.dev
+      libxml2.out
       libxslt.bin
       libxslt.dev
       libxslt.out
 
-      libargon2
-
-      html-tidy
-
-      enchant2.dev
-      enchant2.out
-
-      # Redis/Memcached support
-      hiredis
-
-      libmemcached
-
-      # ImageMagick for image processing
-      imagemagick.out
-      imagemagick.dev
+      # === PHP Extensions ===
+      php84Extensions.igbinary.dev
+      php84Extensions.igbinary.out
     ];
   };
 in
@@ -187,15 +257,36 @@ in
         vim = "hx";
         nano = "hx";
         ls = "eza -lamuUh --git --git-repos --octal-permissions --color-scale --color-scale-mode gradient --classify=always";
-        update = "sudo nix-channel --update && sudo nix flake update --flake /etc/nixos && sudo nixos-rebuild switch --flake /etc/nixos && mise upgrade && mise prune && ghcup install ghc latest && ghcup install cabal latest && ghcup install stack latest && ghcup install hls latest && ghcup set ghc latest && ghcup set cabal latest && ghcup set stack latest && ghcup set hls latest";
-        prune = "ghcup gc --unset && nix-env --delete-generations old && sudo nix-store --gc && nix-collect-garbage -d && sudo nix-collect-garbage -d";
+        update = ''
+          sudo nix-channel --update && \
+          sudo nix flake update --flake /etc/nixos && \
+          sudo nixos-rebuild switch --flake /etc/nixos -v -v && \
+          sudo nix-store --optimise && \
+          mise upgrade && \
+          mise prune && \
+          ghcup install ghc latest && \
+          ghcup install cabal latest && \
+          ghcup install stack latest && \
+          ghcup install hls latest && \
+          ghcup set ghc latest && \
+          ghcup set cabal latest && \
+          ghcup set stack latest && \
+          ghcup set hls latest
+        '';
+        prune = ''
+          ghcup gc --unset && \
+          nix-env --delete-generations old && \
+          sudo nix-store --gc && \
+          nix-collect-garbage -d && \
+          sudo nix-collect-garbage -d
+        '';
         commit_update = "cd ~/src/nix-src && git add * && git commit -m \"$(openssl dgst -sha256 -binary < /etc/nixos/flake.lock | base100)\"";
       };
 
       sessionVariables = {
         EDITOR = "hx";
         MISE_NODE_COREPACK = "true";
-        
+
         # Build flags
         CFLAGS = "-O2 -g -I${devLibs}/include";
         CXXFLAGS = "-O2 -g -I${devLibs}/include";
@@ -204,28 +295,28 @@ in
         LDFLAGS = "-L${devLibs}/lib";
         LD_LIBRARY_PATH = "${devLibs}/lib:${pkgs.stdenv.cc.cc.lib}/lib";
         PKG_CONFIG_PATH = "${devLibs}/lib/pkgconfig:${devLibs}/share/pkgconfig";
-        
+
         # Nix build environment
         NIX_CFLAGS_COMPILE = "-I${devLibs}/include";
         NIX_LDFLAGS = "-L${devLibs}/lib";
-        
+
         # CMake configuration
         CMAKE_PREFIX_PATH = "${devLibs}";
         CMAKE_INCLUDE_PATH = "${devLibs}/include";
         CMAKE_LIBRARY_PATH = "${devLibs}/lib";
-        
+
         # Python/mise configuration
         PYTHON_CONFIGURE_OPTS = "--with-openssl=${devLibs}";
-        
+
         # Erlang/Elixir configuration
         KERL_CONFIGURE_OPTIONS = "--enable-wx --enable-webview --with-ssl=${devLibs} --with-odbc=${devLibs}";
-        
+
         # PHP configuration
         PHP_CONFIGURE_OPTIONS = "--with-openssl=${devLibs} --with-curl=${devLibs} --with-gettext=${devLibs} --with-sodium=${devLibs}";
-        
+
         # Ruby configuration (skip test extensions to avoid NixOS glibc compatibility issues)
         RUBY_CONFIGURE_OPTS = "--disable-install-doc --with-out-ext=-test-/cxxanyargs";
-        
+
         # Clang/LLVM library paths
         ZLIB_ROOT = "${devLibs}";
         ZLIB_LIBRARY = "${devLibs}/lib/libz.so";
@@ -242,16 +333,25 @@ in
         LIBEDIT_ROOT = "${devLibs}";
         LIBEDIT_LIBRARIES = "${devLibs}/lib";
         LIBEDIT_INCLUDE_DIR = "${devLibs}/include";
-        
+
         # Rust linker configuration
         RUSTFLAGS = "-L ${devLibs}/lib -L ${pkgs.stdenv.cc.cc.lib}/lib -C link-arg=-Wl,-rpath,${devLibs}/lib -C link-arg=-Wl,-rpath,${pkgs.stdenv.cc.cc.lib}/lib";
       };
 
-    packages = with pkgs; [
-      (pkgs.callPackage ./download.nix { })
-      
+    packages =
+      let
+        # Automatically load all .nix scripts from ./scripts
+        scriptDir = ./scripts;
+        scriptFiles = builtins.attrNames (builtins.readDir scriptDir);
+        nixScripts = builtins.filter (name: pkgs.lib.hasSuffix ".nix" name) scriptFiles;
+        scripts = map (name: pkgs.callPackage (scriptDir + "/${name}") { }) nixScripts;
+      in scripts ++ (with pkgs; [
+
       # Add devLibs to packages so it's in the environment
       devLibs
+
+      # Zed editor from flake
+      # zed-editor.packages.${pkgs.stdenv.hostPlatform.system}.default
 
       fastfetch
       nnn # terminal file manager
@@ -287,7 +387,6 @@ in
       gnused
       gnutar
       gawk
-      zstd
       gnupg
       findutils
 
@@ -333,7 +432,7 @@ in
       patch
       m4
       flex
-      
+
       # libraries
       rlwrap
       bc
@@ -352,12 +451,12 @@ in
 
       nixd
       nil
-    ];
+    ]);
     stateVersion = "25.05";
   };
 
   programs = {
-    
+
     bash = {
       enable = true;
       # ... other things here
@@ -379,7 +478,7 @@ in
         enable = true;
       };
     };
-    
+
     git = {
       enable = true;
       settings = {
@@ -392,6 +491,7 @@ in
 
     mise = {
       enable = true;
+      package = mise.packages.${pkgs.stdenv.hostPlatform.system}.default;
       enableBashIntegration = true;
       enableZshIntegration = true;
       enableNushellIntegration = true;
@@ -441,12 +541,12 @@ in
       enable = true;
       # The config.nu can be anywhere you want if you like to edit your Nushell with Nu
       # configFile.source = ./.../config.nu;
-      # for editing directly to config.nu 
-      
+      # for editing directly to config.nu
+
       extraEnv = ''
 
       '';
-      
+
       extraConfig = ''
         $env.config.hooks.env_change = {}
         let carapace_completer = {|spans|
@@ -471,14 +571,14 @@ in
             algorithm: "fuzzy"    # prefix or fuzzy
             external: {
               # set to false to prevent nushell looking into $env.PATH to find more suggestions
-                enable: true 
+                enable: true
               # set to lower can improve completion performance at the cost of omitting some options
-                max_results: 100 
-                completer: $carapace_completer # check 'carapace_completer' 
+                max_results: 100
+                completer: $carapace_completer # check 'carapace_completer'
             }
           }
-        } 
-        $env.PATH = ($env.PATH | 
+        }
+        $env.PATH = ($env.PATH |
           split row (char esep) |
           prepend /home/kautau/.apps |
           append /usr/bin/env
@@ -497,7 +597,7 @@ in
       enable = true;
       settings = {
         add_newline = false;
-        character = { 
+        character = {
           success_symbol = "[➜](bold green)";
           error_symbol = "[➜](bold red)";
         };
