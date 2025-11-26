@@ -50,7 +50,7 @@
           {
             users.users.kautau = {
               isNormalUser = true;
-              shell = pkgs.bash;
+              shell = pkgs.zsh;
             };
           }
 

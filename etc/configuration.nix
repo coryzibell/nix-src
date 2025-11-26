@@ -14,6 +14,9 @@
   ];
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  
+  programs.zsh.enable = true;
+  
   environment.systemPackages = with pkgs; [
     # Flakes clones its dependencies through the git command,
     # so git must be installed first
@@ -21,6 +24,7 @@
     vim
     wget
     nushell
+    zsh
   ];
   # Set the default editor to vim
   environment.variables.EDITOR = "nano";
