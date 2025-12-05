@@ -22,6 +22,8 @@
       "cargo:bottom" = "latest";
       "cargo:cargo-outdated" = "latest";
       "cargo:eza" = "latest";
+      "cargo:mx" = "latest";
+      "cargo:gifclip" = "latest";
       "cargo:speedo" = "latest";
       "cargo:tealdeer" = "latest";
       "npm:npm" = "latest";

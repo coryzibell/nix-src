@@ -14,7 +14,6 @@
     mise prune
   '';
   prune = ''
-    ghcup gc --unset && \
     nix-env --delete-generations old && \
     sudo nix-store --gc && \
     nix-collect-garbage -d && \
@@ -22,5 +21,4 @@
     mise-clear && \
     mise upgrade
   '';
-  commit_update = "cd ~/src/nix-src && git add * && git commit -m \"$(openssl dgst -sha256 -binary < /etc/nixos/flake.lock | base-d -e base100)\"";
 }

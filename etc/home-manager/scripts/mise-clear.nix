@@ -13,7 +13,7 @@ pkgs.writeShellScriptBin "mise-clear" ''
     installed_tools=$(mise list --installed 2>/dev/null | awk '{print $1}' | sort -u)
 
     # Tools to keep
-    keep_tools=("node" "npm:npm")
+    keep_tools=("node" "npm:npm" "rust")
 
     # Counter for uninstalled tools
     uninstalled_count=0
