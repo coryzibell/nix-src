@@ -14,6 +14,10 @@
   # Networking
   networking = {
     networkmanager.enable = true;
+
+    # Use modern nftables backend instead of iptables
+    nftables.enable = true;
+
     firewall = {
       enable = true;
       # Open ports as needed

@@ -22,17 +22,19 @@
   hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 
   # Enable AMD GPU support (integrated graphics)
-  hardware.opengl = {
+  hardware.graphics = {
     enable = true;
-    driSupport = true;
-    driSupport32Bit = true;
+    enable32Bit = true;
   };
 
   # Networking hardware
   networking.useDHCP = lib.mkDefault true;
 
-  # Use the latest kernel for best AMD support
-  boot.kernelPackages = pkgs.linuxPackages_latest;
+  # Use LTS kernel for ZFS stability
+  # ZFS doesn't always support latest kernels - LTS is recommended
+  # boot.kernelPackages = pkgs.linuxPackages_latest; # Risky with ZFS
+  # boot.kernelPackages = config.boot.zfs.package.latestCompatibleLinuxPackages; # Deprecated
+  # Using default LTS kernel (safest for ZFS)
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
 }

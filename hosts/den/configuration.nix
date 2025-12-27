@@ -59,7 +59,7 @@
     extraGroups = [ "wheel" "docker" "networkmanager" ];
     shell = pkgs.zsh;
     openssh.authorizedKeys.keys = [
-      # Add SSH public keys here
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJjMvfQ4tCUekA6Ug12T1oaB86Z9jgz9Pnov7REhx78h kautau@den"
     ];
   };
 

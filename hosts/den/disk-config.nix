@@ -56,6 +56,10 @@
       rpool = {
         type = "zpool";
         mode = "mirror";
+        options = {
+          ashift = "12"; # Sector size alignment - recommended for modern SSDs
+          autotrim = "on"; # Enable TRIM for SSDs
+        };
         rootFsOptions = {
           compression = "zstd";
           acltype = "posixacl";

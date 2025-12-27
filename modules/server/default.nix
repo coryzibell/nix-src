@@ -25,7 +25,6 @@
 
   # Disable unnecessary services for headless servers
   services.xserver.enable = lib.mkDefault false;
-  sound.enable = lib.mkDefault false;
 
   # Security hardening
   security = {
