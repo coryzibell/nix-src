@@ -2,6 +2,10 @@
 
 {
   enable = true;
+  initExtra = ''
+    # The Tsunderground greeting
+    echo "🦊 *ding* Welcome to den~ The clipboard is on fire. This is fine."
+  '';
   enableCompletion = true;
   syntaxHighlighting.enable = true;
   autosuggestion.enable = true;
